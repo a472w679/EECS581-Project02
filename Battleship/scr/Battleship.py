@@ -28,8 +28,6 @@ Usage:
 - The game is played in the console, where players are prompted to input ship placements and guesses.
 - The program keeps track of hits and misses, providing real-time feedback to players.
 
-Note:
-- Future improvements could include graphical interfaces and advanced error handling to further enhance the gameplay experience.
 """
 
 import random
