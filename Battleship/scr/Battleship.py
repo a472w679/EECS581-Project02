@@ -1,4 +1,11 @@
 """
+Authors:
+Kemar Wilson
+Yadhunath Tharakeswaran
+Jawad Ahsan
+Dev Patel
+Sanketh Reddy
+
 This Python program implements a console-based version of the classic Battleship game for two players.
 
 Game Overview:
