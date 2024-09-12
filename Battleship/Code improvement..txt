@@ -1,0 +1,62 @@
+Code improvement.
+
+Converted the base code into well-segmented code with 3 files. 
+- board.py
+- player.py
+- main.py
+
+We should run the code on main.py file for running the program.
+
+Here is a simple successful test of the program:
+
+Enter name for Player 1: ally
+Enter name for Player 2: bob
+ally, enter the number of ships (1-5): 1
+Place your 1x1 ship (e.g., B3): b3
+Choose orientation (H for horizontal, V for vertical): h
+bob, enter the number of ships (1-5): 1
+Place your 1x1 ship (e.g., B3): c3
+Choose orientation (H for horizontal, V for vertical): v
+
+ally's turn to guess:
+ally, enter your guess (e.g., B3): b4
+It's a miss!
+
+bob's turn to guess:
+bob, enter your guess (e.g., B3): b3
+It's a hit!
+bob wins! All ships of ally are sunk.
+
+
+-----------NEED FOR IMPROVEMENTS----------------------
+
+- We need to adequately comment each of the functions, and classes file elaborating what each of the function does. 
+
+- There are some rare in-built function calls used like "chr" in "board.py", and "ord" in "player.py". We should explain the use of these calls and also say why did we use them.
+
+----CODING IMPROVEMENTS---
+
+when it ask for, "enter the number of ships (1-5):" and we accidentally enter "c3" or "h or v" it breaks the program and we have to start the function again.
+
+
+bob, enter the number of ships (1-5): c3
+Traceback (most recent call last):
+  File "c:\Users\..\scr\main.py", line 27, in <module>
+    main()
+  File "c:\Users\..\scr\main.py", line 8, in main
+    player2.place_ships()
+  File "c:\Users\..\src\player.py", line 10, in place_ships
+    num_ships = int(input(f"{self.name}, enter the number of ships (1-5): "))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: invalid literal for int() with base 10: 'c3'
+
+
+--Therefore it would be better to modify the code such that it produces warning message such as "Enter a valid value" so that the program doesn't terminate and we don't need to restart the program.
+
+-- Please feel free to work on whichever function you would like to but please make sure what you worked on or will be working in the group chat.
+
+--Please share your inputs in enhancing the program as much as possible.
+
+-- We also need to improve the user interface of the game as well.
+
+
