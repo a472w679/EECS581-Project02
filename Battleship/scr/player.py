@@ -1,4 +1,5 @@
 from board import Board
+from ship import Ship
 
 class Player:
     def __init__(self, name):
@@ -12,13 +13,12 @@ class Player:
         while num_ships < 1 or num_ships > 5:
             print("Please enter a valid number of ships (1-5).")
             num_ships = int(input(f"{self.name}, enter the number of ships (1-5): "))
-        
+
         for size in range(1, num_ships + 1):
             valid_position = False
             
             while not valid_position:
                 position = input(f"Place your {size}x1 ship (e.g., B3): ").upper()
-                
                 if len(position) < 2 or not position[0].isalpha() or not position[1:].isdigit():
                     print("Invalid input format. Please use the format 'LetterNumber' (e.g., B3).")
                     continue
@@ -35,18 +35,9 @@ class Player:
                     print("Invalid orientation. Please enter 'H' for horizontal or 'V' for vertical.")
                     continue
 
-                # Check if the ship can be placed
-                if orientation == 'H' and (y + size > self.board.size):
-                    print("Ship cannot be placed horizontally. It exceeds the board limits.")
-                    continue
-                if orientation == 'V' and (x + size > self.board.size):
-                    print("Ship cannot be placed vertically. It exceeds the board limits.")
-                    continue
-
-                # Place the ship if all checks are passed
-                ship = {'size': size, 'position': (x, y), 'orientation': orientation}
-                self.board.place_ship(ship)
-                valid_position = True
+                ship = Ship(size, (x, y), orientation)
+                if self.board.place_ship(ship):
+                    valid_position = True
 
     def make_guess(self, opponent):
         valid_guess = False
@@ -72,4 +63,3 @@ class Player:
             else:
                 print("It's a miss!")
             valid_guess = True
-
