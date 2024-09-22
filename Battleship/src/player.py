@@ -32,6 +32,11 @@ class Player:
 
         # Loop to place ships based on size
         for size in range(1, num_ships + 1):
+            
+            print()
+            self.board.print_board()
+            print()
+
             valid_position = False  # Flag to indicate if a valid position has been chosen
             
             # Keep asking for a valid position until the ship is successfully placed
@@ -62,6 +67,10 @@ class Player:
                 ship = Ship(size, (x, y), orientation)
                 if self.board.place_ship(ship):  # Place the ship and check if the position is valid
                     valid_position = True  # Ship placed successfully, exit the loop
+
+    def print_boards(self):
+        print()
+        self.guesses.print_two_boards(self.board, self.name)
 
     @staticmethod
     def submit_guess(self, opponent, position):

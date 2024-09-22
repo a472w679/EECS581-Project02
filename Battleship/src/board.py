@@ -14,9 +14,19 @@ class Board:
         """
         Prints the current state of the board, displaying row numbers and column letters (A-J).
         """
-        print("  " + " ".join(chr(65 + i) for i in range(self.size)))  # Print column headers (A-J)
+        print("   " + " ".join(chr(65 + i) for i in range(self.size)))  # Print column headers (A-J)
         for i in range(self.size):
-            print(f"{i + 1} " + " ".join(self.grid[i]))  # Print row numbers and grid content
+            print(f"{str(i + 1).rjust(2, ' ')} " + " ".join(self.grid[i]))  # Print row numbers and grid content
+    
+    def print_two_boards(self, other, name = "Your"):
+        column_labels = " ".join(chr(65 + i) for i in range(self.size))
+        print(f"   {name}'s Guesses".ljust(28) + f"{name}'s Placements")
+        print("   " + column_labels + "      " + column_labels)
+        for i in range(self.size):
+            print(
+                f"{str(i + 1).rjust(2, ' ')} " + " ".join(self.grid[i]),
+                f"{str(i + 1).rjust(4, ' ')} " + " ".join(other.grid[i])
+            )
 
     def place_ship(self, ship):
         """

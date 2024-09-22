@@ -47,6 +47,7 @@ def main():
     player2.place_ships(num_ships)
     
     while True:
+        player1.print_boards()
         print(f"\n{player1.name}'s turn to guess:")
         player1.make_guess(player2)
 
@@ -55,6 +56,7 @@ def main():
             break
 
         # Player 2's turn
+        player2.print_boards()
         print(f"\n{player2.name}'s turn to guess:")
         player2.make_guess(player1)
 
