@@ -42,7 +42,7 @@ def main():
     player1 = Player(input("Enter name for Player 1: "))
     player2 = Player(input("Enter name for Player 2: "))
     
-    num_ships = int(input(f"{self.name}, enter the number of ships (1-5): "))
+    num_ships = int(input(f"Enter the number of ships (1-5): "))
     player1.place_ships(num_ships)
     player2.place_ships(num_ships)
     

@@ -49,8 +49,12 @@ class Board:
         for ship in self.ships:
             if (x, y) in ship.coordinates and not ship.destroyed:
                 self.grid[x][y] = 'X'  # Mark a hit with 'X'
-                ship.destroyed = True  # Mark the ship as destroyed
-                print(f"Ship at {x+1},{chr(y+65)} has been destroyed!")  # Inform the player
+                print(f"Ship at {x+1},{chr(y+65)} has been hit!")  # Inform the player
+
+                if all(self.grid[i][j] == 'X' for i, j in ship.coordinates):
+                    ship.destroyed = True  # Mark the ship as destroyed
+                    print("Ship was sunk!")
+
                 return True
         
         # If no ship is hit, mark it as a miss with 'O'
