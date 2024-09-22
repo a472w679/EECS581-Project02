@@ -19,15 +19,12 @@ class Player:
         self.board = Board()  # Board object representing the player's ship placements
         self.guesses = Board()  # Board object representing the player's guesses on the opponent's board
 
-    def place_ships(self):
+    def place_ships(self, num_ships):
         """
         Handles the process of placing ships on the player's board. The player is prompted to input the number of ships 
         (between 1 and 5), and for each ship, the player is asked to provide the starting position and orientation 
         (horizontal or vertical). The function checks if the position is valid and places the ship on the board.
-        """
-        # Get the number of ships from the player (between 1 and 5)
-        num_ships = int(input(f"{self.name}, enter the number of ships (1-5): "))
-        
+        """        
         # Validate the number of ships
         while num_ships < 1 or num_ships > 5:
             print("Please enter a valid number of ships (1-5).")
