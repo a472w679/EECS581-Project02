@@ -1,6 +1,8 @@
 # Import necessary classes from other modules
 from board import Board
 from ship import Ship
+from enum import Enum
+import random
 
 class Player:
     """
@@ -64,6 +66,25 @@ class Player:
                 if self.board.place_ship(ship):  # Place the ship and check if the position is valid
                     valid_position = True  # Ship placed successfully, exit the loop
 
+    @staticmethod
+    def submit_guess(self, opponent, position):
+            x, y = position
+
+            if x < 0 or x >= self.board.size or \
+               y < 0 or y >= self.board.size:
+                return None
+            
+            if self.guesses.grid[x][y] != '~':
+                return None
+    
+            # Check if the guess hits an opponent's ship
+            hit = opponent.board.receive_fire(x, y)
+            
+            # Update the guesses board with 'X' for hit and 'O' for miss
+            self.guesses.grid[x][y] = 'X' if hit else 'O'
+
+            return hit
+
     def make_guess(self, opponent):
         """
         Allows the player to guess the position of the opponent's ships. The player enters a position, and it is 
@@ -90,15 +111,158 @@ class Player:
                 print("Guess out of bounds. Please choose a valid position on the board.")
                 continue
 
-            # Check if the guess hits an opponent's ship
-            hit = opponent.board.receive_fire(x, y)
-            
-            # Update the guesses board with 'X' for hit and 'O' for miss
-            self.guesses.grid[x][y] = 'X' if hit else 'O'
-            
+            hit = Player.submit_guess(self, opponent, (x, y))
+
             # Inform the player about the result of the guess
             if hit:
                 print("It's a hit!")
             else:
                 print("It's a miss!")
+
             valid_guess = True  # Valid guess made, exit the loop
+
+### AI Player Logic ############################################################
+
+def get_random_position():
+    return (int(random.random() * 10) for _ in range(2))
+
+def add_tuples(tuple1, tuple2):
+    return (
+        tuple1[0] + tuple2[0],
+        tuple2[1] + tuple2[1]
+    )
+
+class AIDifficulties(Enum):
+    EASY   = 0 # Randomly firing dummy AI
+    MEDIUM = 1 # Classic human strategy
+    HARD   = 2 # Cheating strategy
+
+def AI_factory(difficulty):
+    """
+    GoF Factory function for getting AI adversaries 
+    of varying difficulties.
+    """
+    return [
+        AIPlayerEasy(),
+        AIPlayerMedium(),
+        AIPlayerHard()
+    ][difficulty.value]
+
+class AIPlayer(Player):
+    """
+    AI bandwagon stuff
+    """
+
+    def __init__(self):
+        self.board   = Board()
+        self.guesses = Board()
+
+    def place_ships(self, ship_count):
+        for size in range(1, ship_count + 1):
+            valid_place = False
+
+            while not valid_place:
+                orientation = ['H', 'V'][random.getrandbits(1)]
+                position    = get_random_position()
+
+                ship = Ship(size, position, orientation)
+                valid_place = self.board.place_ship(ship)
+
+    def make_guess(self, opponent):
+        raise NotImplementedError()
+
+class AIPlayerEasy(AIPlayer):
+    def __init__(self):
+        super().__init__()
+
+    def make_guess(self, opponent):
+        valid_guess = False
+
+        while not valid_guess:
+            # This AI isn't very smart and just picks randomly.
+            position    = get_random_position()
+            valid_guess = Player.submit_guess(opponent, position) is not None
+
+class AIPlayerMedium(AIPlayer):
+    def __init__(self):
+        super().__init__()
+        self.initial_hit   = None
+        self.previous_hit  = None
+        self.hit_direction = None
+
+    def clear_strategy_if_sunk():
+        pass
+
+    def make_guess(self, opponent):
+        STEPS = [
+            (0, 1), ( 0, -1),
+            (1, 0), (-1,  0)
+        ]
+
+        # If there currently isn't a ship to be targeted
+        if self.initial_hit is None:
+            position     = None
+            guess_status = False
+    
+            while not guess_status:
+                position     = get_random_position()
+                guess_status = Player.submit_guess(opponent, position) is not None
+            
+            if guess_status:
+                self.initial_hit = position
+                self.clear_strategy_if_sunk()
+
+            return
+
+        # If we have a hit but not an orthogonal hit yet
+        if self.previous_hit is None:
+            for direction in range(4):
+                step = STEPS[direction]
+                position = add_tuples(self.origin_hit, step)
+
+                guess_status = Player.submit_guess(opponent, position)
+                if guess_status is not None:
+                    if guess_status:
+                        self.previous_hit  = position
+                        self.hit_direction = direction
+                        self.clear_strategy_if_sunk()
+
+                    return
+
+            self.initial_hit = None
+            return
+
+        # Otherwise, we have both an initial position and
+        # an previous hit, along with a strategy direction.
+
+        step = STEPS[self.hit_direction]
+        position = self.previous_hit
+
+        for _ in range(opponent.board.ships):
+            position = add_tuples(position, step)
+
+            guess_status = Player.submit_guess(opponent, position)
+            if guess_status is not None:
+                if guess_status:
+                    self.previous_hit = position
+                    self.clear_strategy_if_sunk()
+                else:
+                    self.previous_hit  = None
+                    self.hit_direction = None
+
+                return
+
+class AIPlayerHard(AIPlayer):
+    def __init__(self):
+        super().__init__()
+    
+    def make_guess(self, opponent):
+        for x in range(self.board.size):
+            for y in range(self.board.size):
+    
+                is_ship = opponent.board.grid[x][y] == 'S'
+                is_hit  = self.guesses.grid[x][y] == 'X'
+        
+                if is_ship and not is_hit:
+                    Player.submit_guess(opponent, (x, y))
+    
