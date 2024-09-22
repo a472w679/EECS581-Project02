@@ -36,13 +36,30 @@ Usage:
 - The program keeps track of hits and misses, providing real-time feedback to players.
 
 """
-from player import Player
+from player import Player, AIDifficulties, AI_factory
 
 def main():
-    player1 = Player(input("Enter name for Player 1: "))
-    player2 = Player(input("Enter name for Player 2: "))
-    
     num_ships = int(input(f"Enter the number of ships (1-5): "))
+
+    play_against_AI = input(f"Play against an AI? (y/N): ")
+    play_against_AI = False if not len(play_against_AI) else \
+                      play_against_AI.upper()[0] == 'Y'
+    
+    if play_against_AI:        
+        difficulty_input = input("Choose AI difficulty (E/m/h): ")
+        difficulty = {
+            'E': AIDifficulties.EASY,
+            'M': AIDifficulties.MEDIUM,
+            'H': AIDifficulties.HARD
+        }[difficulty_input.upper()[0]]
+
+        player1 = Player("Player")
+        player2 = AI_factory(difficulty)
+
+    else: 
+        player1 = Player(input("Enter name for Player 1: "))
+        player2 = Player(input("Enter name for Player 2: "))
+    
     player1.place_ships(num_ships)
     player2.place_ships(num_ships)
     

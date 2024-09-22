@@ -89,6 +89,12 @@ class Player:
             # Update the guesses board with 'X' for hit and 'O' for miss
             self.guesses.grid[x][y] = 'X' if hit else 'O'
 
+            # Inform the player about the result of the guess
+            if hit:
+                print("It's a hit!")
+            else:
+                print("It's a miss!")
+
             return hit
 
     def make_guess(self, opponent):
@@ -118,12 +124,6 @@ class Player:
                 continue
 
             hit = Player.submit_guess(self, opponent, (x, y))
-
-            # Inform the player about the result of the guess
-            if hit:
-                print("It's a hit!")
-            else:
-                print("It's a miss!")
 
             valid_guess = True  # Valid guess made, exit the loop
 
@@ -174,12 +174,16 @@ class AIPlayer(Player):
                 ship = Ship(size, position, orientation)
                 valid_place = self.board.place_ship(ship)
 
+    def print_boards(self):
+        pass
+
     def make_guess(self, opponent):
         raise NotImplementedError()
 
 class AIPlayerEasy(AIPlayer):
     def __init__(self):
         super().__init__()
+        self.name    = "AI (EASY)"
 
     def make_guess(self, opponent):
         valid_guess = False
@@ -187,14 +191,16 @@ class AIPlayerEasy(AIPlayer):
         while not valid_guess:
             # This AI isn't very smart and just picks randomly.
             position    = get_random_position()
-            valid_guess = Player.submit_guess(opponent, position) is not None
+            valid_guess = Player.submit_guess(self, opponent, position) is not None
 
 class AIPlayerMedium(AIPlayer):
     def __init__(self):
         super().__init__()
+        self.name          = "AI (MEDIUM)"
         self.initial_hit   = None
         self.previous_hit  = None
         self.hit_direction = None
+
 
     def clear_strategy_if_sunk():
         pass
@@ -212,7 +218,7 @@ class AIPlayerMedium(AIPlayer):
     
             while not guess_status:
                 position     = get_random_position()
-                guess_status = Player.submit_guess(opponent, position) is not None
+                guess_status = Player.submit_guess(self, opponent, position) is not None
             
             if guess_status:
                 self.initial_hit = position
@@ -226,7 +232,7 @@ class AIPlayerMedium(AIPlayer):
                 step = STEPS[direction]
                 position = add_tuples(self.origin_hit, step)
 
-                guess_status = Player.submit_guess(opponent, position)
+                guess_status = Player.submit_guess(self, opponent, position)
                 if guess_status is not None:
                     if guess_status:
                         self.previous_hit  = position
@@ -247,7 +253,7 @@ class AIPlayerMedium(AIPlayer):
         for _ in range(opponent.board.ships):
             position = add_tuples(position, step)
 
-            guess_status = Player.submit_guess(opponent, position)
+            guess_status = Player.submit_guess(self, opponent, position)
             if guess_status is not None:
                 if guess_status:
                     self.previous_hit = position
@@ -261,6 +267,8 @@ class AIPlayerMedium(AIPlayer):
 class AIPlayerHard(AIPlayer):
     def __init__(self):
         super().__init__()
+        self.name = "AI (HARD)"
+
     
     def make_guess(self, opponent):
         for x in range(self.board.size):
@@ -270,5 +278,5 @@ class AIPlayerHard(AIPlayer):
                 is_hit  = self.guesses.grid[x][y] == 'X'
         
                 if is_ship and not is_hit:
-                    Player.submit_guess(opponent, (x, y))
+                    Player.submit_guess(self, opponent, (x, y))
     
