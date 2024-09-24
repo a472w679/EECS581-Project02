@@ -130,12 +130,12 @@ class Player:
 ### AI Player Logic ############################################################
 
 def get_random_position():
-    return (int(random.random() * 10) for _ in range(2))
+    return tuple(int(random.random() * 10) for _ in range(2))
 
 def add_tuples(tuple1, tuple2):
     return (
         tuple1[0] + tuple2[0],
-        tuple2[1] + tuple2[1]
+        tuple1[1] + tuple2[1]
     )
 
 class AIDifficulties(Enum):
@@ -201,9 +201,13 @@ class AIPlayerMedium(AIPlayer):
         self.previous_hit  = None
         self.hit_direction = None
 
-
-    def clear_strategy_if_sunk():
-        pass
+    def clear_strategy_if_sunk(self, opponent):
+        for ship in opponent.board.ships:
+            if self.initial_hit in ship.coordinates and ship.destroyed:
+                self.initial_hit   = None
+                self.previous_hit  = None
+                self.hit_direction = None
+                return
 
     def make_guess(self, opponent):
         STEPS = [
@@ -214,15 +218,15 @@ class AIPlayerMedium(AIPlayer):
         # If there currently isn't a ship to be targeted
         if self.initial_hit is None:
             position     = None
-            guess_status = False
+            guess_status = None
     
-            while not guess_status:
+            while guess_status is None:
                 position     = get_random_position()
-                guess_status = Player.submit_guess(self, opponent, position) is not None
+                guess_status = Player.submit_guess(self, opponent, position)
             
             if guess_status:
                 self.initial_hit = position
-                self.clear_strategy_if_sunk()
+                self.clear_strategy_if_sunk(opponent)
 
             return
 
@@ -230,14 +234,14 @@ class AIPlayerMedium(AIPlayer):
         if self.previous_hit is None:
             for direction in range(4):
                 step = STEPS[direction]
-                position = add_tuples(self.origin_hit, step)
+                position = add_tuples(self.initial_hit, step)
 
                 guess_status = Player.submit_guess(self, opponent, position)
                 if guess_status is not None:
                     if guess_status:
                         self.previous_hit  = position
                         self.hit_direction = direction
-                        self.clear_strategy_if_sunk()
+                        self.clear_strategy_if_sunk(opponent)
 
                     return
 
@@ -250,14 +254,14 @@ class AIPlayerMedium(AIPlayer):
         step = STEPS[self.hit_direction]
         position = self.previous_hit
 
-        for _ in range(opponent.board.ships):
+        for _ in opponent.board.ships:
             position = add_tuples(position, step)
 
             guess_status = Player.submit_guess(self, opponent, position)
             if guess_status is not None:
                 if guess_status:
                     self.previous_hit = position
-                    self.clear_strategy_if_sunk()
+                    self.clear_strategy_if_sunk(opponent)
                 else:
                     self.previous_hit  = None
                     self.hit_direction = None
@@ -268,7 +272,6 @@ class AIPlayerHard(AIPlayer):
     def __init__(self):
         super().__init__()
         self.name = "AI (HARD)"
-
     
     def make_guess(self, opponent):
         for x in range(self.board.size):
