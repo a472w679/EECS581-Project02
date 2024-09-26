@@ -211,10 +211,11 @@ class AIPlayerMedium(AIPlayer):
 
     def make_guess(self, opponent):
         STEPS = [
-            (0, 1), ( 0, -1),
-            (1, 0), (-1,  0)
+            (-1,  0), (0,  1),
+            ( 1,  0), (0, -1)
         ]
 
+        # CASE ONE
         # If there currently isn't a ship to be targeted
         if self.initial_hit is None:
             position     = None
@@ -230,24 +231,45 @@ class AIPlayerMedium(AIPlayer):
 
             return
 
+        # CASE TWO
         # If we have a hit but not an orthogonal hit yet
         if self.previous_hit is None:
             for direction in range(4):
-                step = STEPS[direction]
-                position = add_tuples(self.initial_hit, step)
+                step     = STEPS[direction]
+                position = self.initial_hit
 
-                guess_status = Player.submit_guess(self, opponent, position)
-                if guess_status is not None:
-                    if guess_status:
-                        self.previous_hit  = position
-                        self.hit_direction = direction
-                        self.clear_strategy_if_sunk(opponent)
+                # Loop for a maximum of the longest ships length
+                # This way, we can probe ship cells even if they
+                # are separated by successful hits from old probes.
+                for _ in opponent.board.ships:
+                    position = add_tuples(position, step)
 
-                    return
+                    # If probe lands on an already hit cell, then 
+                    # proceed to probe deeper along the direction.
+                    x, y   = position
+                    is_hit = self.guesses.grid[x][y] == 'X'
+                    if is_hit: continue
 
+                    guess_status = Player.submit_guess(self, opponent, position)
+
+                    # Hit was valid, this probe is complete.
+                    if guess_status is not None:
+                        if guess_status:
+                            self.previous_hit  = position
+                            self.hit_direction = direction
+                            self.clear_strategy_if_sunk(opponent)
+
+                        return
+
+                    # Direction is invalid, try another one.
+                    break
+                
+            # Failed to find a valid direction. This should
+            # never happen, but if it does, fail gracefully.
             self.initial_hit = None
             return
 
+        # CASE THREE
         # Otherwise, we have both an initial position and
         # an previous hit, along with a strategy direction.
 
@@ -282,4 +304,5 @@ class AIPlayerHard(AIPlayer):
         
                 if is_ship and not is_hit:
                     Player.submit_guess(self, opponent, (x, y))
+                    return
     
