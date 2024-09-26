@@ -5,6 +5,12 @@ Derived from team EECS581 Team 5's repository. This program is an implementation
 of the game BattleShip made in Python. In the spirit of the project, design decisions
 made by Team 5 such as  programming language, UI type, etc. have been retained.
 
+## How to run it?
+1) Make sure Python is installed.
+2) Enter the repository's root directory.
+3) Run `python Battleship/src/main.py` \
+   OR `python3 Battleship/src/main.py`
+
 # TODO
 ### Fixes:
 - [x] Make it so that the ship count of both player is always the same.
