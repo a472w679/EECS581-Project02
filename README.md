@@ -23,12 +23,12 @@ made by Team 5 such as  programming language, UI type, etc. have been retained.
 - [x] Add easy difficulty AI.
 - [x] Add medium difficulty AI.
 - [x] Add hard difficulty AI.
-- [ ] Add ship hit sound effect.
-- [ ] Add ship sink sound effect.
-- [ ] Add victory sound effect
+- [x] Add ship hit sound effect.
+- [x] Add ship miss sound effect.
+- [x] Add victory sound effect
 
 ### QoL:
-- [ ] Improve user input sanitation, especially initialization input.
+- [x] Improve user input sanitation, especially initialization input.
 - [ ] Cleanup terminal outputs to make it more aesthetically coherent.
 - [ ] Color different cell types in the grid using different colors.
 - [ ] Clear the terminal between turns to prevent cheating.
