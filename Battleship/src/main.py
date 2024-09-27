@@ -37,9 +37,17 @@ Usage:
 
 """
 from player import Player, AIDifficulties, AI_factory
+from playsound import playsound
 
 def main():
-    num_ships = int(input(f"Enter the number of ships (1-5): "))
+    while True:
+        num_ships = input("How many ships are you playing with? (1-5): ")
+        # Check if the input is a digit and within the valid range
+        if num_ships.isdigit() and 1 <= int(num_ships) <= 5:
+            num_ships = int(num_ships)  # Valid input, convert to int
+            break  # Exit the loop
+        else:
+            print("Please enter a valid number of ships (1-5).")
 
     play_against_AI = input(f"Play against an AI? (y/N): ")
     play_against_AI = False if not len(play_against_AI) else \
@@ -53,15 +61,15 @@ def main():
             'H': AIDifficulties.HARD
         }[difficulty_input.upper()[0]]
 
-        player1 = Player("Player")
+        player1 = Player("Player", num_ships)
         player2 = AI_factory(difficulty)
 
     else: 
-        player1 = Player(input("Enter name for Player 1: "))
-        player2 = Player(input("Enter name for Player 2: "))
+        player1 = Player(input("Enter name for Player 1: "), num_ships)
+        player2 = Player(input("Enter name for Player 2: "), num_ships)
     
-    player1.place_ships(num_ships)
-    player2.place_ships(num_ships)
+    player1.place_ships()
+    player2.place_ships()
     
     while True:
         player1.print_boards()
@@ -69,6 +77,7 @@ def main():
         player1.make_guess(player2)
 
         if player2.board.all_ships_sunk():
+            playsound("Battleship/src/sound_files/win.mp3")
             print(f"{player1.name} wins! All ships of {player2.name} are sunk.")
             break
 
@@ -78,6 +87,7 @@ def main():
         player2.make_guess(player1)
 
         if player1.board.all_ships_sunk():
+            playsound("Battleship/src/sound_files/win.mp3")
             print(f"{player2.name} wins! All ships of {player1.name} are sunk.")
             break
 

@@ -2,15 +2,20 @@
 from board import Board
 from ship import Ship
 from enum import Enum
+from playsound import playsound
 import random
+
+#python3 -m venv battleship
+#source battleship/bin/activate
+#pip3 install PyObjC
+#pip3 install playsound
 
 class Player:
     """
     The Player class represents a player in a battleship game. Each player has a board for placing ships and 
     another board for tracking their guesses on the opponent's ships.
     """
-
-    def __init__(self, name):
+    def __init__(self, name, num_ships):
         """
         Initializes a new player with a given name. The player also has two boards: one for their own ships and
         one for recording their guesses on the opponent's board.
@@ -18,21 +23,17 @@ class Player:
         self.name = name  # Name of the player
         self.board = Board()  # Board object representing the player's ship placements
         self.guesses = Board()  # Board object representing the player's guesses on the opponent's board
+        self.num_ships = num_ships
 
-    def place_ships(self, num_ships):
+    def place_ships(self):
         """
         Handles the process of placing ships on the player's board. The player is prompted to input the number of ships 
         (between 1 and 5), and for each ship, the player is asked to provide the starting position and orientation 
         (horizontal or vertical). The function checks if the position is valid and places the ship on the board.
         """        
-        # Validate the number of ships
-        while num_ships < 1 or num_ships > 5:
-            print("Please enter a valid number of ships (1-5).")
-            num_ships = int(input(f"{self.name}, enter the number of ships (1-5): "))
 
         # Loop to place ships based on size
-        for size in range(1, num_ships + 1):
-            
+        for size in range(1, self.num_ships + 1):
             print()
             self.board.print_board()
             print()
@@ -41,7 +42,7 @@ class Player:
             
             # Keep asking for a valid position until the ship is successfully placed
             while not valid_position:
-                position = input(f"Place your {size}x1 ship (e.g., B3): ").upper()
+                position = input(self.name + f" place your {size}x1 ship (e.g., B3): ").upper()
 
                 # Validate the input format (must be letter followed by a number)
                 if len(position) < 2 or not position[0].isalpha() or not position[1:].isdigit():
@@ -58,10 +59,13 @@ class Player:
                     continue
 
                 # Ask for the ship's orientation (H for horizontal, V for vertical)
-                orientation = input("Choose orientation (H for horizontal, V for vertical): ").upper()
-                if orientation not in ['H', 'V']:
-                    print("Invalid orientation. Please enter 'H' for horizontal or 'V' for vertical.")
-                    continue
+                if size != 1:
+                    orientation = input("Choose orientation (H for horizontal, V for vertical): ").upper()
+                    if orientation not in ['H', 'V']:
+                        print("Invalid orientation. Please enter 'H' for horizontal or 'V' for vertical.")
+                        continue
+                else: 
+                    orientation = 'H'
 
                 # Create a new Ship object and attempt to place it on the board
                 ship = Ship(size, (x, y), orientation)
@@ -92,8 +96,10 @@ class Player:
             # Inform the player about the result of the guess
             if hit:
                 print("It's a hit!")
+                playsound("Battleship/src/sound_files/hit.wav")
             else:
                 print("It's a miss!")
+                playsound("Battleship/src/sound_files/miss.mp3")
 
             return hit
 
