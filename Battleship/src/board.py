@@ -14,9 +14,19 @@ class Board:
         """
         Prints the current state of the board, displaying row numbers and column letters (A-J).
         """
-        print("  " + " ".join(chr(65 + i) for i in range(self.size)))  # Print column headers (A-J)
+        print("   " + " ".join(chr(65 + i) for i in range(self.size)))  # Print column headers (A-J)
         for i in range(self.size):
-            print(f"{i + 1} " + " ".join(self.grid[i]))  # Print row numbers and grid content
+            print(f"{str(i + 1).rjust(2, ' ')} " + " ".join(self.grid[i]))  # Print row numbers and grid content
+    
+    def print_two_boards(self, other, name = "Your"):
+        column_labels = " ".join(chr(65 + i) for i in range(self.size))
+        print(f"   {name}'s Guesses".ljust(28) + f"{name}'s Placements")
+        print("   " + column_labels + "      " + column_labels)
+        for i in range(self.size):
+            print(
+                f"{str(i + 1).rjust(2, ' ')} " + " ".join(self.grid[i]),
+                f"{str(i + 1).rjust(4, ' ')} " + " ".join(other.grid[i])
+            )
 
     def place_ship(self, ship):
         """
@@ -49,8 +59,12 @@ class Board:
         for ship in self.ships:
             if (x, y) in ship.coordinates and not ship.destroyed:
                 self.grid[x][y] = 'X'  # Mark a hit with 'X'
-                ship.destroyed = True  # Mark the ship as destroyed
-                print(f"Ship at {x+1},{chr(y+65)} has been destroyed!")  # Inform the player
+                print(f"Ship at {x+1},{chr(y+65)} has been hit!")  # Inform the player
+
+                if all(self.grid[i][j] == 'X' for i, j in ship.coordinates):
+                    ship.destroyed = True  # Mark the ship as destroyed
+                    print("Ship was sunk!")
+
                 return True
         
         # If no ship is hit, mark it as a miss with 'O'
