@@ -149,15 +149,15 @@ class AIDifficulties(Enum):
     MEDIUM = 1 # Classic human strategy
     HARD   = 2 # Cheating strategy
 
-def AI_factory(difficulty):
+def AI_factory(difficulty, num_ships):
     """
     GoF Factory function for getting AI adversaries 
     of varying difficulties.
     """
     return [
-        AIPlayerEasy(),
-        AIPlayerMedium(),
-        AIPlayerHard()
+        AIPlayerEasy(num_ships),
+        AIPlayerMedium(num_ships),
+        AIPlayerHard(num_ships)
     ][difficulty.value]
 
 class AIPlayer(Player):
@@ -165,12 +165,13 @@ class AIPlayer(Player):
     AI bandwagon stuff
     """
 
-    def __init__(self):
-        self.board   = Board()
-        self.guesses = Board()
+    def __init__(self, num_ships):
+        self.num_ships = num_ships
+        self.board     = Board()
+        self.guesses   = Board()
 
-    def place_ships(self, ship_count):
-        for size in range(1, ship_count + 1):
+    def place_ships(self):
+        for size in range(1, self.num_ships + 1):
             valid_place = False
 
             while not valid_place:
@@ -187,8 +188,8 @@ class AIPlayer(Player):
         raise NotImplementedError()
 
 class AIPlayerEasy(AIPlayer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, num_ships):
+        super().__init__(num_ships)
         self.name    = "AI (EASY)"
 
     def make_guess(self, opponent):
@@ -200,8 +201,8 @@ class AIPlayerEasy(AIPlayer):
             valid_guess = Player.submit_guess(self, opponent, position) is not None
 
 class AIPlayerMedium(AIPlayer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, num_ships):
+        super().__init__(num_ships)
         self.name          = "AI (MEDIUM)"
         self.initial_hit   = None
         self.previous_hit  = None
@@ -273,6 +274,7 @@ class AIPlayerMedium(AIPlayer):
             # Failed to find a valid direction. This should
             # never happen, but if it does, fail gracefully.
             self.initial_hit = None
+            self.make_guess(opponent)
             return
 
         # CASE THREE
@@ -297,8 +299,8 @@ class AIPlayerMedium(AIPlayer):
                 return
 
 class AIPlayerHard(AIPlayer):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, num_ships):
+        super().__init__(num_ships)
         self.name = "AI (HARD)"
     
     def make_guess(self, opponent):

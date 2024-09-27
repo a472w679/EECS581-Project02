@@ -62,8 +62,7 @@ def main():
         }[difficulty_input.upper()[0]]
 
         player1 = Player("Player", num_ships)
-        player2 = AI_factory(difficulty)
-
+        player2 = AI_factory(difficulty, num_ships)
     else: 
         player1 = Player(input("Enter name for Player 1: "), num_ships)
         player2 = Player(input("Enter name for Player 2: "), num_ships)
@@ -77,8 +76,8 @@ def main():
         player1.make_guess(player2)
 
         if player2.board.all_ships_sunk():
-            playsound("Battleship/src/sound_files/win.mp3")
             print(f"{player1.name} wins! All ships of {player2.name} are sunk.")
+            playsound("Battleship/src/sound_files/win.mp3")
             break
 
         # Player 2's turn
@@ -87,8 +86,8 @@ def main():
         player2.make_guess(player1)
 
         if player1.board.all_ships_sunk():
-            playsound("Battleship/src/sound_files/win.mp3")
             print(f"{player2.name} wins! All ships of {player1.name} are sunk.")
+            playsound("Battleship/src/sound_files/win.mp3")
             break
 
 if __name__ == "__main__":
