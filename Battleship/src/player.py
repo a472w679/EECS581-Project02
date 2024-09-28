@@ -3,6 +3,7 @@ from board import Board
 from ship import Ship
 from enum import Enum
 from playsound import playsound
+import os 
 import random
 
 #python3 -m venv battleship
@@ -93,13 +94,15 @@ class Player:
             # Update the guesses board with 'X' for hit and 'O' for miss
             self.guesses.grid[x][y] = 'X' if hit else 'O'
 
+            cwd = str(os.getcwd())
             # Inform the player about the result of the guess
             if hit:
                 print("It's a hit!")
-                playsound("Battleship/src/sound_files/hit.wav")
+
+                playsound(f"{cwd}/Battleship/src/sound_files/hit-2.wav")
             else:
                 print("It's a miss!")
-                playsound("Battleship/src/sound_files/miss.mp3")
+                playsound(f"{cwd}/Battleship/src/sound_files/miss-2.wav")
 
             return hit
 
