@@ -365,8 +365,14 @@ class AIPlayerMedium(AIPlayer):
                     position = add_tuples(position, step)  # Probe further in the chosen direction
 
                     x, y = position
-                    is_hit = self.guesses.grid[x][y] == 'X'  # Check if cell has been hit already
-                    if is_hit: continue
+
+                    # Check another direction if probe goes off board
+                    if x < 0 or x >= opponent.board.size or \
+                       y < 0 or y >= opponent.board.size:
+                        break
+
+                    if self.guesses.grid[x][y] == 'X':  # Check if cell has been hit already
+                        continue
 
                     guess_status = Player.submit_guess(self, opponent, position)
 
@@ -376,8 +382,10 @@ class AIPlayerMedium(AIPlayer):
                             self.hit_direction = direction  # Record the direction
                             self.clear_strategy_if_sunk(opponent)
                         return
+                    
+                    break # Probe hit invalid cell
 
-                # If no valid direction found, reset and retry
+            # If no valid direction found, reset and retry
             self.initial_hit = None
             self.make_guess(opponent)
             return
@@ -387,7 +395,17 @@ class AIPlayerMedium(AIPlayer):
         position = self.previous_hit
 
         for _ in opponent.board.ships:
-            position = add_tuples(position, step)  # Move in the confirmed direction
+            position = add_tuples(position, step)  # Move in the confirmed direction            
+            x, y = position
+
+            # Check another direction if probe goes off board
+            if x < 0 or x >= opponent.board.size or \
+               y < 0 or y >= opponent.board.size:
+                break
+
+            # Check if probe is a known miss
+            if self.guesses.grid[x][y] == 'O':
+                break
 
             guess_status = Player.submit_guess(self, opponent, position)
             if guess_status is not None:
@@ -399,6 +417,11 @@ class AIPlayerMedium(AIPlayer):
                     self.previous_hit = None
                     self.hit_direction = None
                 return
+        
+        # If the direction goes off the board, reset and retry
+        self.previous_hit  = None
+        self.hit_direction = None
+        self.make_guess(opponent)
 
 
 class AIPlayerHard(AIPlayer):
