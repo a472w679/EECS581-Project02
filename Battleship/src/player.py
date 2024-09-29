@@ -160,6 +160,11 @@ class Player:
                 print("Guess out of bounds. Please choose a valid position on the board.")
                 continue
 
+            # Check if guess is a duplicate guess or not
+            if self.guesses.grid[x][y] != '~':
+                print("Guess is a duplicate. Please choose a unique guess")
+                continue 
+
             hit = Player.submit_guess(self, opponent, (x, y))
 
             valid_guess = True  # Valid guess made, exit the loop
