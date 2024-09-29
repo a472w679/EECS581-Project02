@@ -51,10 +51,3 @@ made by Team 5 such as  programming language, UI type, etc. have been retained.
 - `
 playsound(f"absolute/path/to/Battleship/src/sound_files/miss-2.wav")
 `
-
-## Python Playsound Error 261 for command: The driver cannot recognize the specified command
-Uninstall playsound 
-`pip uninstall playsound`
-
-And install an older version (1.2.2)
-`pip install playsound==1.2.2`
