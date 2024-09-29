@@ -1,4 +1,4 @@
-# Program Name:player.py
+# Name:player.py
 # Description: This module defines the Player and AI classes for a console-based Battleship game. 
 # Players can place ships, make guesses, and play against AI of varying difficulties (easy, medium, hard).
 # Inputs: Player names, ship placements, and guesses. AI behavior based on difficulty.
